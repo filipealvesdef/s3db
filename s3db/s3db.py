@@ -19,7 +19,7 @@ class s3db:
     def __init__(self, config):
         configs = {
             'bucket_name': '',
-            'collection_files': { 'root': 'root' },
+            'collection_files': {},
             'encoding': 'json',
             'cache': True,
             **config,
@@ -28,13 +28,8 @@ class s3db:
         self.cache = configs['cache']
         self.bucket_name = configs['bucket_name']
         self.encoding = configs['encoding']
-        self.collection_files = configs['collection_files']
-
+        self.collection_files = {}
         self.collection_files_ref = {}
-        for filename, collections in self.collection_files.items():
-            for collection_id in collections:
-                self.collection_files_ref[collection_id] = filename
-
         self.updated_files = []
         self.cached_files = {}
 
@@ -49,6 +44,18 @@ class s3db:
             }
 
         self.s3 = boto3.client('s3', **self.aws_credentials)
+        collections = self.s3.list_objects(Bucket=self.bucket_name)['Contents']
+        collection_names = [os.path.splitext(c['Key'])[0] for c in collections]
+        for name in collection_names:
+            if name not in configs['collection_files']:
+                self.collection_files[name] = [name]
+
+        for name in configs['collection_files']:
+            self.collection_files[name] = configs['collection_files'][name]
+
+        for filename, collections in self.collection_files.items():
+            for collection_id in collections:
+                self.collection_files_ref[collection_id] = filename
 
 
     def put_s3_object(self, filename, data):
