@@ -146,7 +146,7 @@ class s3db:
         try:
             filename = self.collection_files_ref[c_id]
             collections = self.get_collections(filename)
-            del collections[id]
+            del collections[c_id][id]
             self.store_collections(filename, collections)
         except Exception as e:
             raise e
