@@ -85,8 +85,9 @@ class s3db:
             items = data.items()
             updated = 0
             for k, v in items:
-                if v != collections[c_id][id][k]:
-                    collections[c_id][id][k] = v
+                entry = collections[c_id][id]
+                if k not in entry or v != entry[k]:
+                    entry[k] = v
                     updated += 1
             if updated:
                 self.store_collections(filename, collections)
