@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='s3db',
     description='A simple document db using s3 buckets',
-    version='1.0.2',
+    version='1.0.3',
     author='Filipe Alves',
     author_email='filipe.alvesdefernando@gmail.com',
     install_requires=[
